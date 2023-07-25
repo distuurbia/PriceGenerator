@@ -2,6 +2,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/caarlos0/env/v8"
 	"github.com/distuurbia/PriceGenerator/internal/config"
 	"github.com/distuurbia/PriceGenerator/internal/model"
@@ -51,8 +53,8 @@ func main() {
 	priceGeneratorSrv := service.NewPriceGeneratorService(priceGeneratorRepo)
 	shares := createShares()
 
-	for i := 0; i < 10; i++ {
-		err := priceGeneratorSrv.AddToStream(shares)
+	for i := 0; i < 1; i++ {
+		err := priceGeneratorSrv.AddToStream(context.Background(), shares)
 		if err != nil {
 			logrus.Fatalf("main -> %v", err)
 		}
