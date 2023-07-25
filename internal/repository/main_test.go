@@ -15,8 +15,9 @@ import (
 
 var (
 	priceGeneratorRepo *PriceGeneratorRepository
-	shares []*model.Share
+	shares             []*model.Share
 )
+
 func SetupRedis() (*redis.Client, func(), error) {
 	pool, err := dockertest.NewPool("")
 	if err != nil {
@@ -38,7 +39,7 @@ func SetupRedis() (*redis.Client, func(), error) {
 	return client, cleanup, nil
 }
 
-func TestMain(m *testing.M){
+func TestMain(m *testing.M) {
 	const (
 		berkshirePrice = 453066
 		twitterPrice   = 54
@@ -52,7 +53,7 @@ func TestMain(m *testing.M){
 		&model.Share{Name: "Tesla", Price: teslaPrice},
 		&model.Share{Name: "Apple", Price: applePrice},
 		&model.Share{Name: "Coca-Cola", Price: cocaColaPrice})
-		
+
 	rdsClient, cleanupRds, err := SetupRedis()
 	if err != nil {
 		fmt.Println(err)
