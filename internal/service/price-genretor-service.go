@@ -54,12 +54,12 @@ func (priceGeneratorSrv *PriceGeneratorService) SharesChangePrice(shares []*mode
 }
 
 // AddToStream adds to stream array of shares trough repository AddToStream method
-func (priceGeneratorSrv *PriceGeneratorService) AddToStream(shares []*model.Share) (err error) {
+func (priceGeneratorSrv *PriceGeneratorService) AddToStream(ctx context.Context, shares []*model.Share) (err error) {
 	shares, err = priceGeneratorSrv.SharesChangePrice(shares)
 	if err != nil {
 		return fmt.Errorf("PriceGeneratorService -> AddToStream -> %w ", err)
 	}
-	err = priceGeneratorSrv.priceGeneratorRepo.AddToStream(context.Background(), shares)
+	err = priceGeneratorSrv.priceGeneratorRepo.AddToStream(ctx, shares)
 	if err != nil {
 		return fmt.Errorf("priceGeneratorSrv -> AddToStream -> %w", err)
 	}
