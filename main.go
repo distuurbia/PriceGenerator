@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"time"
 
 	"github.com/caarlos0/env/v8"
 	"github.com/distuurbia/PriceGenerator/internal/config"
@@ -52,12 +53,12 @@ func main() {
 	priceGeneratorRepo := repository.NewPriceGeneratorRepository(client, &cfg)
 	priceGeneratorSrv := service.NewPriceGeneratorService(priceGeneratorRepo)
 	shares := createShares()
-
-	for i := 0; i < 1; i++ {
-		err := priceGeneratorSrv.AddToStream(context.Background(), shares)
+	var err error
+	for {
+		shares, err = priceGeneratorSrv.AddToStream(context.Background(), shares)
 		if err != nil {
 			logrus.Fatalf("main -> %v", err)
 		}
-		logrus.Info("have written to stream ", i)
+		time.Sleep(1 * time.Second)
 	}
 }
