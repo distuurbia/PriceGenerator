@@ -26,18 +26,18 @@ func NewPriceGeneratorRepository(client *redis.Client, cfg *config.Config) *Pric
 }
 
 // AddToStream adds a message to the redis stream
-func (priceGeneratorRepo *PriceGeneratorRepository) AddToStream(ctx context.Context, shares []*model.Share) error {
+func (r *PriceGeneratorRepository) AddToStream(ctx context.Context, shares []*model.Share) error {
 	sharesJSON, err := json.Marshal(shares)
 	if err != nil {
 		return fmt.Errorf("RedisStreamRepository -> AddToStream -> json.Marshal -> %w", err)
 	}
 	streamData := redis.XAddArgs{
-		Stream: priceGeneratorRepo.cfg.RedisStreamName,
+		Stream: r.cfg.RedisStreamName,
 		Values: map[string]interface{}{
-			priceGeneratorRepo.cfg.RedisStreamField: string(sharesJSON),
+			r.cfg.RedisStreamField: string(sharesJSON),
 		},
 	}
-	_, err = priceGeneratorRepo.client.XAdd(ctx, &streamData).Result()
+	_, err = r.client.XAdd(ctx, &streamData).Result()
 	if err != nil {
 		return fmt.Errorf("RedisStreamRepository -> AddToStream -> XAdd -> %w", err)
 	}

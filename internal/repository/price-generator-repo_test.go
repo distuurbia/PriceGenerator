@@ -8,6 +8,6 @@ import (
 )
 
 func TestAddToStream(t *testing.T) {
-	err := priceGeneratorRepo.AddToStream(context.Background(), shares)
+	err := r.AddToStream(context.Background(), shares)
 	require.NoError(t, err)
 }
