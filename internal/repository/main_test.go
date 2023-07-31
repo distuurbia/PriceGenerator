@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	priceGeneratorRepo *PriceGeneratorRepository
+	r *PriceGeneratorRepository
 	shares             []*model.Share
 )
 
@@ -64,7 +64,7 @@ func TestMain(m *testing.M) {
 	if err := env.Parse(&cfg); err != nil {
 		logrus.Fatalf("failed to parse config: %v", err)
 	}
-	priceGeneratorRepo = NewPriceGeneratorRepository(rdsClient, &cfg)
+	r = NewPriceGeneratorRepository(rdsClient, &cfg)
 
 	exitCode := m.Run()
 

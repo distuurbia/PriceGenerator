@@ -50,12 +50,12 @@ func main() {
 	}
 
 	client := connectRedis(&cfg)
-	priceGeneratorRepo := repository.NewPriceGeneratorRepository(client, &cfg)
-	priceGeneratorSrv := service.NewPriceGeneratorService(priceGeneratorRepo)
+	r := repository.NewPriceGeneratorRepository(client, &cfg)
+	s := service.NewPriceGeneratorService(r)
 	shares := createShares()
 	var err error
 	for {
-		shares, err = priceGeneratorSrv.AddToStream(context.Background(), shares)
+		shares, err = s.AddToStream(context.Background(), shares)
 		if err != nil {
 			logrus.Fatalf("main -> %v", err)
 		}

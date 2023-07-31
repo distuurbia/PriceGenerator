@@ -23,16 +23,16 @@ type PriceGeneratorRepository interface {
 
 // PriceGeneratorService contains an inerface of PriceGeneratorRepository
 type PriceGeneratorService struct {
-	priceGeneratorRepo PriceGeneratorRepository
+	r PriceGeneratorRepository
 }
 
 // NewPriceGeneratorService creates an object of PriceGeneratorService by using PriceGeneratorRepository interface
-func NewPriceGeneratorService(priceGeneratorRepo PriceGeneratorRepository) *PriceGeneratorService {
-	return &PriceGeneratorService{priceGeneratorRepo: priceGeneratorRepo}
+func NewPriceGeneratorService(r PriceGeneratorRepository) *PriceGeneratorService {
+	return &PriceGeneratorService{r: r}
 }
 
 // GenerateRandomDeltaPrice returns random delta for changing price
-func (priceGeneratorSrv *PriceGeneratorService) GenerateRandomDeltaPrice() (delta float64, err error) {
+func (s *PriceGeneratorService) GenerateRandomDeltaPrice() (delta float64, err error) {
 	nBig, err := rand.Int(rand.Reader, big.NewInt(1<<intSize))
 	if err != nil {
 		return delta, fmt.Errorf("GenereteRandomDeltaPrice %w ", err)
@@ -42,9 +42,9 @@ func (priceGeneratorSrv *PriceGeneratorService) GenerateRandomDeltaPrice() (delt
 }
 
 // SharesChangePrice return shares with changed price by some random delta
-func (priceGeneratorSrv *PriceGeneratorService) SharesChangePrice(shares []*model.Share) (sharesChangedPrice []*model.Share, err error) {
+func (s *PriceGeneratorService) SharesChangePrice(shares []*model.Share) (sharesChangedPrice []*model.Share, err error) {
 	for _, share := range shares {
-		delta, err := priceGeneratorSrv.GenerateRandomDeltaPrice()
+		delta, err := s.GenerateRandomDeltaPrice()
 		if err != nil {
 			return nil, fmt.Errorf("SharesChangePrice -> %w ", err)
 		}
@@ -54,14 +54,14 @@ func (priceGeneratorSrv *PriceGeneratorService) SharesChangePrice(shares []*mode
 }
 
 // AddToStream adds to stream array of shares trough repository AddToStream method
-func (priceGeneratorSrv *PriceGeneratorService) AddToStream(ctx context.Context, shares []*model.Share) (newShares []*model.Share, err error) {
-	shares, err = priceGeneratorSrv.SharesChangePrice(shares)
+func (s *PriceGeneratorService) AddToStream(ctx context.Context, shares []*model.Share) (newShares []*model.Share, err error) {
+	shares, err = s.SharesChangePrice(shares)
 	if err != nil {
 		return nil, fmt.Errorf("PriceGeneratorService -> AddToStream -> %w ", err)
 	}
-	err = priceGeneratorSrv.priceGeneratorRepo.AddToStream(ctx, shares)
+	err = s.r.AddToStream(ctx, shares)
 	if err != nil {
-		return nil, fmt.Errorf("priceGeneratorSrv -> AddToStream -> %w", err)
+		return nil, fmt.Errorf("PriceGeneratorService -> AddToStream -> %w", err)
 	}
 	return shares, nil
 }
