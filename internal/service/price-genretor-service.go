@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	minPriceChange = -0.1
-	maxPriceChange = 0.1
+	minPriceChange = -1
+	maxPriceChange = 1
 	intSize        = 53
 )
 
@@ -49,6 +49,9 @@ func (s *PriceGeneratorService) SharesChangePrice(shares []*model.Share) (shares
 			return nil, fmt.Errorf("SharesChangePrice -> %w ", err)
 		}
 		share.Price += delta
+		if share.Price <= 0 {
+			share.Price++
+		}
 	}
 	return shares, nil
 }
